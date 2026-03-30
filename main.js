@@ -85,26 +85,14 @@ var MermaidPackRegistry = class {
     pending.forEach((prefix) => this.registered.add(prefix));
   }
 };
-function copyToClipboard(text) {
-  if (navigator.clipboard?.writeText) {
-    return navigator.clipboard.writeText(text);
+function toError(error) {
+  return error instanceof Error ? error : new Error(String(error));
+}
+async function copyToClipboard(text) {
+  if (!navigator.clipboard?.writeText) {
+    throw new Error("Clipboard API is unavailable in this environment.");
   }
-  return new Promise((resolve, reject) => {
-    try {
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      textarea.style.position = "fixed";
-      textarea.style.left = "-9999px";
-      document.body.appendChild(textarea);
-      textarea.focus();
-      textarea.select();
-      document.execCommand("copy");
-      textarea.remove();
-      resolve();
-    } catch (error) {
-      reject(error);
-    }
-  });
+  await navigator.clipboard.writeText(text);
 }
 var IconPickerModal = class extends import_obsidian.Modal {
   constructor(app, plugin, prefix) {
@@ -241,66 +229,80 @@ var MermaidIconifySettingTab = class extends import_obsidian.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "Mermaid Iconify" });
+    new import_obsidian.Setting(containerEl).setName("Mermaid Iconify").setHeading();
     containerEl.createDiv({
       cls: "mermaid-iconify-help",
       text: "Discover official Iconify packs, enable them for Mermaid, and open an icon picker."
     });
     new import_obsidian.Setting(containerEl).setName("Filter packs").setDesc("Filter by prefix, pack name, author, category, or license.").addText(
-      (text) => text.setPlaceholder("mdi, lucide, logos\u2026").setValue(this.plugin.settings.searchText).onChange(async (value) => {
-        this.plugin.settings.searchText = value;
-        await this.plugin.saveSettings();
-        await this.renderPacks();
+      (text) => text.setPlaceholder("mdi, lucide, logos\u2026").setValue(this.plugin.settings.searchText).onChange((value) => {
+        void (async () => {
+          this.plugin.settings.searchText = value;
+          await this.plugin.saveSettings();
+          await this.renderPacks();
+        })();
       })
     );
     new import_obsidian.Setting(containerEl).setName("Show only enabled packs").setDesc("Hide packs that are not currently enabled.").addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.showOnlyEnabled).onChange(async (value) => {
-        this.plugin.settings.showOnlyEnabled = value;
-        await this.plugin.saveSettings();
-        await this.renderPacks();
+      (toggle) => toggle.setValue(this.plugin.settings.showOnlyEnabled).onChange((value) => {
+        void (async () => {
+          this.plugin.settings.showOnlyEnabled = value;
+          await this.plugin.saveSettings();
+          await this.renderPacks();
+        })();
       })
     );
     new import_obsidian.Setting(containerEl).setName("Catalog cache TTL").setDesc("Hours before the Iconify catalog is refreshed automatically.").addText(
-      (text) => text.setPlaceholder("24").setValue(String(this.plugin.settings.cacheTtlHours)).onChange(async (value) => {
-        const parsed = Number(value);
-        if (!Number.isFinite(parsed) || parsed <= 0) return;
-        this.plugin.settings.cacheTtlHours = parsed;
-        await this.plugin.saveSettings();
+      (text) => text.setPlaceholder("24").setValue(String(this.plugin.settings.cacheTtlHours)).onChange((value) => {
+        void (async () => {
+          const parsed = Number(value);
+          if (!Number.isFinite(parsed) || parsed <= 0) return;
+          this.plugin.settings.cacheTtlHours = parsed;
+          await this.plugin.saveSettings();
+        })();
       })
     );
     new import_obsidian.Setting(containerEl).setName("Picker result limit").setDesc("Maximum number of filtered icons shown at once.").addText(
-      (text) => text.setPlaceholder("200").setValue(String(this.plugin.settings.maxIconsInPicker)).onChange(async (value) => {
-        const parsed = Number(value);
-        if (!Number.isFinite(parsed) || parsed <= 0) return;
-        this.plugin.settings.maxIconsInPicker = parsed;
-        await this.plugin.saveSettings();
+      (text) => text.setPlaceholder("200").setValue(String(this.plugin.settings.maxIconsInPicker)).onChange((value) => {
+        void (async () => {
+          const parsed = Number(value);
+          if (!Number.isFinite(parsed) || parsed <= 0) return;
+          this.plugin.settings.maxIconsInPicker = parsed;
+          await this.plugin.saveSettings();
+        })();
       })
     );
     new import_obsidian.Setting(containerEl).setName("Preview size").setDesc("SVG preview height in pixels.").addText(
-      (text) => text.setPlaceholder("24").setValue(String(this.plugin.settings.previewSize)).onChange(async (value) => {
-        const parsed = Number(value);
-        if (!Number.isFinite(parsed) || parsed < 12 || parsed > 128) return;
-        this.plugin.settings.previewSize = parsed;
-        await this.plugin.saveSettings();
+      (text) => text.setPlaceholder("24").setValue(String(this.plugin.settings.previewSize)).onChange((value) => {
+        void (async () => {
+          const parsed = Number(value);
+          if (!Number.isFinite(parsed) || parsed < 12 || parsed > 128) return;
+          this.plugin.settings.previewSize = parsed;
+          await this.plugin.saveSettings();
+        })();
       })
     );
     const actions = containerEl.createDiv({ cls: "mermaid-iconify-actions" });
-    actions.createEl("button", { text: "Refresh official catalog" }).addEventListener("click", async () => {
-      try {
-        await this.plugin.refreshCollections(true);
-        new import_obsidian.Notice("Iconify catalog refreshed.");
-        await this.renderPacks();
-      } catch {
-        new import_obsidian.Notice("Could not refresh the Iconify catalog.");
-      }
+    actions.createEl("button", { text: "Refresh official catalog" }).addEventListener("click", () => {
+      void (async () => {
+        try {
+          await this.plugin.refreshCollections(true);
+          new import_obsidian.Notice("Iconify catalog refreshed.");
+          await this.renderPacks();
+        } catch {
+          new import_obsidian.Notice("Could not refresh the Iconify catalog.");
+        }
+      })();
     });
-    actions.createEl("button", { text: "Open mdi picker" }).addEventListener("click", async () => {
-      try {
-        await this.plugin.enablePack("mdi");
-        new IconPickerModal(this.app, this.plugin, "mdi").open();
-      } catch {
-        new import_obsidian.Notice("Could not open the mdi picker.");
-      }
+    actions.createEl("button", { text: "Open mdi picker" }).addEventListener("click", () => {
+      void (async () => {
+        try {
+          await this.plugin.enablePack("mdi");
+          new IconPickerModal(this.app, this.plugin, "mdi").open();
+        } catch {
+          new import_obsidian.Notice("Could not open the mdi picker.");
+        }
+      })();
     });
     this.metaEl = containerEl.createDiv({ cls: "mermaid-iconify-meta" });
     this.listEl = containerEl.createDiv({ cls: "mermaid-iconify-pack-list" });
@@ -341,29 +343,33 @@ var MermaidIconifySettingTab = class extends import_obsidian.PluginSettingTab {
         parts.push(`Mermaid syntax: ${prefix}:icon-name`);
         const setting = new import_obsidian.Setting(this.listEl).setName(`${prefix} \u2014 ${info.name}`).setDesc(parts.join(" \u2022 "));
         setting.addToggle(
-          (toggle) => toggle.setValue(enabled).onChange(async (value) => {
-            try {
-              if (value) {
-                await this.plugin.enablePack(prefix);
-                new import_obsidian.Notice(`Pack '${prefix}' enabled.`);
-              } else {
-                await this.plugin.disablePack(prefix);
-                new import_obsidian.Notice(`Pack '${prefix}' disabled for future sessions.`);
+          (toggle) => toggle.setValue(enabled).onChange((value) => {
+            void (async () => {
+              try {
+                if (value) {
+                  await this.plugin.enablePack(prefix);
+                  new import_obsidian.Notice(`Pack '${prefix}' enabled.`);
+                } else {
+                  await this.plugin.disablePack(prefix);
+                  new import_obsidian.Notice(`Pack '${prefix}' disabled for future sessions.`);
+                }
+                await this.renderPacks();
+              } catch {
+                new import_obsidian.Notice(`Could not update pack '${prefix}'.`);
               }
-              await this.renderPacks();
-            } catch {
-              new import_obsidian.Notice(`Could not update pack '${prefix}'.`);
-            }
+            })();
           })
         );
         setting.addButton(
-          (button) => button.setButtonText("Picker").onClick(async () => {
-            try {
-              await this.plugin.enablePack(prefix);
-              new IconPickerModal(this.app, this.plugin, prefix).open();
-            } catch {
-              new import_obsidian.Notice(`Could not open the picker for '${prefix}'.`);
-            }
+          (button) => button.setButtonText("Picker").onClick(() => {
+            void (async () => {
+              try {
+                await this.plugin.enablePack(prefix);
+                new IconPickerModal(this.app, this.plugin, prefix).open();
+              } catch {
+                new import_obsidian.Notice(`Could not open the picker for '${prefix}'.`);
+              }
+            })();
           })
         );
       });
@@ -380,7 +386,9 @@ var MermaidIconifyPlugin = class extends import_obsidian.Plugin {
     this.registry = new MermaidPackRegistry(this.iconify);
     this.addSettingTab(new MermaidIconifySettingTab(this.app, this));
     this.app.workspace.onLayoutReady(() => {
-      void this.registry.ensureRegistered(this.settings.enabledPacks).catch(() => {
+      void this.registry.ensureRegistered(this.settings.enabledPacks).catch((error) => {
+        const safeError = toError(error);
+        console.error(safeError);
         new import_obsidian.Notice("Some Mermaid icon packs could not be registered.");
       });
     });
