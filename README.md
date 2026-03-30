@@ -1,15 +1,15 @@
 # Mermaid Iconify
 
-Community plugin that helps you use external Iconify packs inside Mermaid `architecture-beta` diagrams.
+Community plugin for Obsidian that helps you use external Iconify packs inside Mermaid `architecture-beta` diagrams.
 
 ## What it does
 
-- lists Iconify packs from the official catalog;
-- lets the user enable or disable packs for Mermaid;
-- registers enabled packs with Mermaid using `registerIconPacks()`;
-- opens an icon picker per pack;
-- shows live preview images for icons;
-- copies `prefix:name` syntax and Mermaid snippets ready to paste.
+- lists Iconify packs from the official catalog
+- lets the user enable or disable packs for Mermaid
+- registers enabled packs with Mermaid using `registerIconPacks()`
+- opens an icon picker per pack
+- shows live preview images for icons
+- copies `prefix:name` syntax and Mermaid snippets ready to paste
 
 ## Why this plugin exists
 
@@ -57,24 +57,24 @@ architecture-beta
 
 This plugin makes outbound HTTPS requests only when needed:
 
-- `https://api.iconify.design/collections` to fetch the Iconify pack catalog;
-- `https://api.iconify.design/collection?prefix=...` to fetch icon names for a selected pack;
-- `https://unpkg.com/@iconify-json/<prefix>/icons.json` to load the actual Iconify JSON pack used by Mermaid;
-- `https://api.iconify.design/<prefix>/<icon>.svg?...` for preview images shown in the picker.
+- `https://api.iconify.design/collections` to fetch the Iconify pack catalog
+- `https://api.iconify.design/collection?prefix=...` to fetch icon names for a selected pack
+- `https://unpkg.com/@iconify-json/<prefix>/icons.json` to load the actual Iconify JSON pack used by Mermaid
+- `https://api.iconify.design/<prefix>/<icon>.svg?...` for preview images shown in the picker
 
 The plugin does **not** send note contents or vault contents to those services.
 
 ### Accounts and payments
 
-- no account required;
-- no payments;
-- no ads.
+- no account required
+- no payments
+- no ads
 
 ### Telemetry and analytics
 
-- no telemetry;
-- no analytics;
-- no tracking.
+- no telemetry
+- no analytics
+- no tracking
 
 ### External file access
 
@@ -82,16 +82,24 @@ The plugin only stores its own settings inside Obsidian plugin data. It does not
 
 ## Compatibility notes
 
-- `isDesktopOnly` is set to `false`.
-- HTTP requests use Obsidian `requestUrl` rather than `fetch` for plugin network calls.
-- Icon previews are loaded as remote SVG images in the picker UI.
+- `isDesktopOnly` is set to `false`
+- HTTP requests use Obsidian `requestUrl` rather than `fetch` for plugin network calls
+- icon previews are loaded as remote SVG images in the picker UI
 
 ## Release checklist
 
-- update `manifest.json` version;
-- create a GitHub release with a matching tag;
-- upload `main.js`, `manifest.json`, and `styles.css` to the release;
-- submit the plugin to `obsidianmd/obsidian-releases`.
+- update `manifest.json` version
+- create a GitHub release with a matching tag
+- upload `main.js`, `manifest.json`, and `styles.css` to the release
+- submit the plugin to `obsidianmd/obsidian-releases`
+
+## Git cleanup
+
+If `main.js`, `node_modules`, or `release-assets` were accidentally committed, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\cleanup-git-tracked-files.ps1
+```
 
 ## License
 

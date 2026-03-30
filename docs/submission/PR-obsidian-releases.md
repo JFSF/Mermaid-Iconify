@@ -9,7 +9,7 @@ Adds **Mermaid Iconify** to the Obsidian Community Plugins directory.
 
 ## Description
 
-Discover, enable, and use Iconify icon packs in Mermaid diagrams inside Obsidian.
+Discover, enable, and use Iconify icon packs in Mermaid diagrams.
 
 ## Checklist
 
@@ -28,14 +28,14 @@ Discover, enable, and use Iconify icon packs in Mermaid diagrams inside Obsidian
   "id": "mermaid-iconify",
   "name": "Mermaid Iconify",
   "author": "Joao",
-  "description": "Discover, enable, and use Iconify icon packs in Mermaid diagrams inside Obsidian.",
+  "description": "Discover, enable, and use Iconify icon packs in Mermaid diagrams.",
   "repo": "JFSF/Mermaid-Iconify"
 }
 ```
 
 ## Notes for reviewers
 
-This plugin adds support for discovering and registering external Iconify icon packs for Mermaid usage inside Obsidian.
+This plugin adds support for discovering and registering external Iconify icon packs for Mermaid usage.
 
 It uses Obsidian's `requestUrl` for network requests and discloses external network usage in the README.
 

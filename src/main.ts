@@ -129,6 +129,7 @@ class MermaidPackRegistry {
   }
 }
 
+<<<<<<< HEAD
 function toError(error: unknown): Error {
   return error instanceof Error ? error : new Error(String(error));
 }
@@ -136,6 +137,11 @@ function toError(error: unknown): Error {
 async function copyToClipboard(text: string): Promise<void> {
   if (!navigator.clipboard?.writeText) {
     throw new Error('Clipboard API is unavailable in this environment.');
+=======
+async function copyToClipboard(text: string): Promise<void> {
+  if (!navigator.clipboard?.writeText) {
+    throw new Error('Clipboard API is not available.');
+>>>>>>> d3ebda0 (Fix review issues and clean repository for submission)
   }
 
   await navigator.clipboard.writeText(text);
@@ -175,7 +181,9 @@ class IconPickerModal extends Modal {
       placeholder: 'Search icons…',
     });
     this.searchEl.addClass('mermaid-iconify-modal-search');
-    this.searchEl.addEventListener('input', () => this.renderList());
+    this.searchEl.addEventListener('input', () => {
+      this.renderList();
+    });
 
     const previewCard = contentEl.createDiv({ cls: 'mermaid-iconify-preview-card' });
     const previewHead = previewCard.createDiv({ cls: 'mermaid-iconify-preview-head' });
@@ -197,14 +205,11 @@ class IconPickerModal extends Modal {
 
     const actions = previewCard.createDiv({ cls: 'mermaid-iconify-actions' });
     actions.createEl('button', { text: 'Copy icon' }).addEventListener('click', () => {
-      if (!this.selectedIcon) return;
-      void this.copy(`${this.prefix}:${this.selectedIcon}`, `Copied ${this.prefix}:${this.selectedIcon}`);
+      void this.handleCopyIconClick();
     });
 
     actions.createEl('button', { text: 'Copy Mermaid snippet' }).addEventListener('click', () => {
-      if (!this.selectedIcon) return;
-      const snippet = ['architecture-beta', `    service example(${this.prefix}:${this.selectedIcon})[Example]`].join('\n');
-      void this.copy(snippet, 'Mermaid snippet copied');
+      void this.handleCopySnippetClick();
     });
 
     this.statusEl = contentEl.createDiv({ cls: 'mermaid-iconify-note', text: 'Loading icons…' });
@@ -217,11 +222,29 @@ class IconPickerModal extends Modal {
     this.contentEl.empty();
   }
 
+  private async handleCopyIconClick(): Promise<void> {
+    if (!this.selectedIcon) {
+      return;
+    }
+
+    await this.copy(`${this.prefix}:${this.selectedIcon}`, `Copied ${this.prefix}:${this.selectedIcon}`);
+  }
+
+  private async handleCopySnippetClick(): Promise<void> {
+    if (!this.selectedIcon) {
+      return;
+    }
+
+    const snippet = ['architecture-beta', `    service example(${this.prefix}:${this.selectedIcon})[Example]`].join('\n');
+    await this.copy(snippet, 'Mermaid snippet copied');
+  }
+
   private async copy(text: string, notice: string): Promise<void> {
     try {
       await copyToClipboard(text);
       new Notice(notice);
-    } catch {
+    } catch (error) {
+      console.error(error);
       new Notice('Copy failed.');
     }
   }
@@ -231,7 +254,8 @@ class IconPickerModal extends Modal {
       this.iconNames = await this.plugin.getPackIconNames(this.prefix);
       this.statusEl.setText(`Pack total: ${this.iconNames.length} icons`);
       this.renderList();
-    } catch {
+    } catch (error) {
+      console.error(error);
       this.statusEl.setText('Could not load icons for this pack.');
       this.listEl.empty();
       this.listEl.createDiv({ cls: 'mermaid-iconify-modal-empty', text: 'The icon list could not be retrieved.' });
@@ -319,7 +343,14 @@ class MermaidIconifySettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
+<<<<<<< HEAD
     new Setting(containerEl).setName('Mermaid Iconify').setHeading();
+=======
+    new Setting(containerEl)
+      .setName('Mermaid Iconify')
+      .setHeading();
+
+>>>>>>> d3ebda0 (Fix review issues and clean repository for submission)
     containerEl.createDiv({
       cls: 'mermaid-iconify-help',
       text: 'Discover official Iconify packs, enable them for Mermaid, and open an icon picker.',
@@ -329,6 +360,7 @@ class MermaidIconifySettingTab extends PluginSettingTab {
       .setName('Filter packs')
       .setDesc('Filter by prefix, pack name, author, category, or license.')
       .addText((text) =>
+<<<<<<< HEAD
         text.setPlaceholder('mdi, lucide, logos…').setValue(this.plugin.settings.searchText).onChange((value) => {
           void (async () => {
             this.plugin.settings.searchText = value;
@@ -336,6 +368,14 @@ class MermaidIconifySettingTab extends PluginSettingTab {
             await this.renderPacks();
           })();
         })
+=======
+        text
+          .setPlaceholder('mdi, lucide, logos…')
+          .setValue(this.plugin.settings.searchText)
+          .onChange((value) => {
+            void this.handleSearchTextChange(value);
+          })
+>>>>>>> d3ebda0 (Fix review issues and clean repository for submission)
       );
 
     new Setting(containerEl)
@@ -343,25 +383,33 @@ class MermaidIconifySettingTab extends PluginSettingTab {
       .setDesc('Hide packs that are not currently enabled.')
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.showOnlyEnabled).onChange((value) => {
+<<<<<<< HEAD
           void (async () => {
             this.plugin.settings.showOnlyEnabled = value;
             await this.plugin.saveSettings();
             await this.renderPacks();
           })();
+=======
+          void this.handleShowOnlyEnabledChange(value);
+>>>>>>> d3ebda0 (Fix review issues and clean repository for submission)
         })
       );
 
     new Setting(containerEl)
-      .setName('Catalog cache TTL')
+      .setName('Catalog cache time-to-live')
       .setDesc('Hours before the Iconify catalog is refreshed automatically.')
       .addText((text) =>
         text.setPlaceholder('24').setValue(String(this.plugin.settings.cacheTtlHours)).onChange((value) => {
+<<<<<<< HEAD
           void (async () => {
             const parsed = Number(value);
             if (!Number.isFinite(parsed) || parsed <= 0) return;
             this.plugin.settings.cacheTtlHours = parsed;
             await this.plugin.saveSettings();
           })();
+=======
+          void this.handleCacheTtlChange(value);
+>>>>>>> d3ebda0 (Fix review issues and clean repository for submission)
         })
       );
 
@@ -370,12 +418,16 @@ class MermaidIconifySettingTab extends PluginSettingTab {
       .setDesc('Maximum number of filtered icons shown at once.')
       .addText((text) =>
         text.setPlaceholder('200').setValue(String(this.plugin.settings.maxIconsInPicker)).onChange((value) => {
+<<<<<<< HEAD
           void (async () => {
             const parsed = Number(value);
             if (!Number.isFinite(parsed) || parsed <= 0) return;
             this.plugin.settings.maxIconsInPicker = parsed;
             await this.plugin.saveSettings();
           })();
+=======
+          void this.handleMaxIconsChange(value);
+>>>>>>> d3ebda0 (Fix review issues and clean repository for submission)
         })
       );
 
@@ -384,17 +436,22 @@ class MermaidIconifySettingTab extends PluginSettingTab {
       .setDesc('SVG preview height in pixels.')
       .addText((text) =>
         text.setPlaceholder('24').setValue(String(this.plugin.settings.previewSize)).onChange((value) => {
+<<<<<<< HEAD
           void (async () => {
             const parsed = Number(value);
             if (!Number.isFinite(parsed) || parsed < 12 || parsed > 128) return;
             this.plugin.settings.previewSize = parsed;
             await this.plugin.saveSettings();
           })();
+=======
+          void this.handlePreviewSizeChange(value);
+>>>>>>> d3ebda0 (Fix review issues and clean repository for submission)
         })
       );
 
     const actions = containerEl.createDiv({ cls: 'mermaid-iconify-actions' });
     actions.createEl('button', { text: 'Refresh official catalog' }).addEventListener('click', () => {
+<<<<<<< HEAD
       void (async () => {
         try {
           await this.plugin.refreshCollections(true);
@@ -415,12 +472,109 @@ class MermaidIconifySettingTab extends PluginSettingTab {
           new Notice('Could not open the mdi picker.');
         }
       })();
+=======
+      void this.handleRefreshCatalogClick();
+    });
+
+    actions.createEl('button', { text: 'Open MDI picker' }).addEventListener('click', () => {
+      void this.handleOpenMdiPickerClick();
+>>>>>>> d3ebda0 (Fix review issues and clean repository for submission)
     });
 
     this.metaEl = containerEl.createDiv({ cls: 'mermaid-iconify-meta' });
     this.listEl = containerEl.createDiv({ cls: 'mermaid-iconify-pack-list' });
 
     void this.renderPacks();
+  }
+
+  private async handleSearchTextChange(value: string): Promise<void> {
+    this.plugin.settings.searchText = value;
+    await this.plugin.saveSettings();
+    await this.renderPacks();
+  }
+
+  private async handleShowOnlyEnabledChange(value: boolean): Promise<void> {
+    this.plugin.settings.showOnlyEnabled = value;
+    await this.plugin.saveSettings();
+    await this.renderPacks();
+  }
+
+  private async handleCacheTtlChange(value: string): Promise<void> {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      return;
+    }
+
+    this.plugin.settings.cacheTtlHours = parsed;
+    await this.plugin.saveSettings();
+  }
+
+  private async handleMaxIconsChange(value: string): Promise<void> {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      return;
+    }
+
+    this.plugin.settings.maxIconsInPicker = parsed;
+    await this.plugin.saveSettings();
+  }
+
+  private async handlePreviewSizeChange(value: string): Promise<void> {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed) || parsed < 12 || parsed > 128) {
+      return;
+    }
+
+    this.plugin.settings.previewSize = parsed;
+    await this.plugin.saveSettings();
+  }
+
+  private async handleRefreshCatalogClick(): Promise<void> {
+    try {
+      await this.plugin.refreshCollections(true);
+      new Notice('Iconify catalog refreshed.');
+      await this.renderPacks();
+    } catch (error) {
+      console.error(error);
+      new Notice('Could not refresh the Iconify catalog.');
+    }
+  }
+
+  private async handleOpenMdiPickerClick(): Promise<void> {
+    try {
+      await this.plugin.enablePack('mdi');
+      new IconPickerModal(this.app, this.plugin, 'mdi').open();
+    } catch (error) {
+      console.error(error);
+      new Notice('Could not open the MDI picker.');
+    }
+  }
+
+  private async updatePackEnabled(prefix: string, enabled: boolean): Promise<void> {
+    try {
+      if (enabled) {
+        await this.plugin.enablePack(prefix);
+        new Notice(`Pack '${prefix}' enabled.`);
+      } else {
+        await this.plugin.disablePack(prefix);
+        new Notice(`Pack '${prefix}' disabled for future sessions.`);
+      }
+
+      await this.renderPacks();
+    } catch (error) {
+      console.error(error);
+      new Notice(`Could not update pack '${prefix}'.`);
+    }
+  }
+
+  private async openPackPicker(prefix: string): Promise<void> {
+    try {
+      await this.plugin.enablePack(prefix);
+      new IconPickerModal(this.app, this.plugin, prefix).open();
+    } catch (error) {
+      console.error(error);
+      new Notice(`Could not open the picker for '${prefix}'.`);
+    }
   }
 
   private async renderPacks(): Promise<void> {
@@ -436,7 +590,9 @@ class MermaidIconifySettingTab extends PluginSettingTab {
           }
 
           const query = this.plugin.settings.searchText.trim().toLowerCase();
-          if (!query) return true;
+          if (!query) {
+            return true;
+          }
 
           const haystack = [
             prefix,
@@ -474,6 +630,7 @@ class MermaidIconifySettingTab extends PluginSettingTab {
 
         setting.addToggle((toggle) =>
           toggle.setValue(enabled).onChange((value) => {
+<<<<<<< HEAD
             void (async () => {
               try {
                 if (value) {
@@ -488,11 +645,15 @@ class MermaidIconifySettingTab extends PluginSettingTab {
                 new Notice(`Could not update pack '${prefix}'.`);
               }
             })();
+=======
+            void this.updatePackEnabled(prefix, value);
+>>>>>>> d3ebda0 (Fix review issues and clean repository for submission)
           })
         );
 
         setting.addButton((button) =>
           button.setButtonText('Picker').onClick(() => {
+<<<<<<< HEAD
             void (async () => {
               try {
                 await this.plugin.enablePack(prefix);
@@ -501,10 +662,14 @@ class MermaidIconifySettingTab extends PluginSettingTab {
                 new Notice(`Could not open the picker for '${prefix}'.`);
               }
             })();
+=======
+            void this.openPackPicker(prefix);
+>>>>>>> d3ebda0 (Fix review issues and clean repository for submission)
           })
         );
       });
-    } catch {
+    } catch (error) {
+      console.error(error);
       this.metaEl.setText('Could not load the Iconify catalog.');
       this.listEl.createDiv({ text: 'The official Iconify catalog could not be retrieved.' });
     }
@@ -526,9 +691,14 @@ export default class MermaidIconifyPlugin extends Plugin {
     this.addSettingTab(new MermaidIconifySettingTab(this.app, this));
 
     this.app.workspace.onLayoutReady(() => {
+<<<<<<< HEAD
       void this.registry.ensureRegistered(this.settings.enabledPacks).catch((error: unknown) => {
         const safeError = toError(error);
         console.error(safeError);
+=======
+      void this.registry.ensureRegistered(this.settings.enabledPacks).catch((error) => {
+        console.error(error);
+>>>>>>> d3ebda0 (Fix review issues and clean repository for submission)
         new Notice('Some Mermaid icon packs could not be registered.');
       });
     });
@@ -548,7 +718,9 @@ export default class MermaidIconifyPlugin extends Plugin {
 
   async enablePack(prefix: string): Promise<void> {
     const clean = prefix.trim();
-    if (!clean) throw new Error('Invalid pack prefix.');
+    if (!clean) {
+      throw new Error('Invalid pack prefix.');
+    }
 
     if (!this.settings.enabledPacks.includes(clean)) {
       this.settings.enabledPacks = [...this.settings.enabledPacks, clean].sort();

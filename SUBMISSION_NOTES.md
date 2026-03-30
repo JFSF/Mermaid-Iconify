@@ -17,7 +17,7 @@ Present in repository root:
 
 ## Release assets
 
-Use the release assets generated from the build for the GitHub release binary attachments:
+Use the build output for the GitHub release binary attachments:
 
 - `main.js`
 - `manifest.json`
@@ -26,6 +26,6 @@ Use the release assets generated from the build for the GitHub release binary at
 ## Notes
 
 - Plugin id is `mermaid-iconify` and does not contain `obsidian`.
-- Plugin name avoids the redundant `Obsidian` prefix.
 - Network use is disclosed in `README.md`.
 - Plugin code uses `requestUrl` for JSON API calls.
+- Do not commit `main.js`, `node_modules`, or `release-assets` to the repository.
