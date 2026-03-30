@@ -1,0 +1,114 @@
+.mermaid-iconify-help,
+.mermaid-iconify-meta,
+.mermaid-iconify-note,
+.mermaid-iconify-modal-help {
+  color: var(--text-muted);
+}
+
+.mermaid-iconify-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mermaid-iconify-pack-list {
+  margin-top: 14px;
+}
+
+.mermaid-iconify-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mermaid-iconify-modal-search {
+  width: 100%;
+}
+
+.mermaid-iconify-preview-card {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--background-secondary);
+}
+
+.mermaid-iconify-preview-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.mermaid-iconify-preview-image,
+.mermaid-iconify-inline-image {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.mermaid-iconify-preview-image {
+  width: 56px;
+  height: 56px;
+}
+
+.mermaid-iconify-code {
+  font-family: var(--font-monospace);
+  font-size: 0.95em;
+  word-break: break-all;
+}
+
+.mermaid-iconify-modal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 50vh;
+  overflow: auto;
+}
+
+.mermaid-iconify-modal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.mermaid-iconify-modal-row.is-selected {
+  border-color: var(--interactive-accent);
+  background: var(--background-primary-alt);
+}
+
+.mermaid-iconify-modal-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mermaid-iconify-label-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mermaid-iconify-inline-fallback {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+}
+
+.mermaid-iconify-modal-empty {
+  padding: 12px;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 10px;
+  color: var(--text-muted);
+}
