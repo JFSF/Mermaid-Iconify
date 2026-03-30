@@ -1,6 +1,6 @@
 # Mermaid Iconify
 
-Community plugin for Obsidian that helps you use external Iconify packs inside Mermaid `architecture-beta` diagrams.
+Community plugin that helps you use external Iconify packs inside Mermaid `architecture-beta` diagrams.
 
 ## What it does
 
