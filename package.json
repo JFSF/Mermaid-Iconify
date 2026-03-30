@@ -1,0 +1,15 @@
+{
+  "name": "mermaid-iconify",
+  "version": "0.3.1",
+  "private": true,
+  "description": "Obsidian plugin to browse Iconify packs and use them with Mermaid.",
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "dev": "node esbuild.mjs --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "obsidian": "^1.8.0",
+    "typescript": "^5.8.3"
+  }
+}
