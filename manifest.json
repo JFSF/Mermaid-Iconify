@@ -1,0 +1,9 @@
+{
+  "id": "mermaid-iconify",
+  "name": "Mermaid Iconify",
+  "version": "0.3.1",
+  "minAppVersion": "1.5.0",
+  "description": "Browse Iconify packs, register them in Mermaid, and copy Mermaid-ready icon syntax.",
+  "author": "Joao",
+  "isDesktopOnly": false
+}
